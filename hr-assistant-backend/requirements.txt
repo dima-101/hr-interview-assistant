@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+jinja2
+sqlalchemy
+pydantic
+python-dotenv
+python-multipart
+itsdangerous
+httpx
+alembic

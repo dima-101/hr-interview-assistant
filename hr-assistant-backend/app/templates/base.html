@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}HR Interview Assistant{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="/static/js/main.js" defer></script>
+</head>
+<body>
+    <header>
+        <div class="container header-row">
+
+            <!-- ВКЛЮЧИТЬ ДЛЯ ХОСТИНГА ПРЕДПРИЯТИЯ: логотип MASCOM слева в шапке -->
+            <!--
+            <a href="https://www.mascom.ru/" target="_blank" rel="noopener noreferrer" class="brand-logo-link">
+                <img src="/static/img/mascom-logo.jpg" alt="Логотип MASCOM" class="brand-logo">
+            </a>
+            -->
+
+            <div class="logo">HR Interview Assistant</div>
+
+            <nav>
+                <a href="/">Главная</a>
+                <a href="/about">О проекте</a>
+                <a href="/vacancies">Вакансии</a>
+                
+                <!-- ВКЛЮЧИТЬ ДЛЯ ХОСТИНГА ПРЕДПРИЯТИЯ: ссылка на основной сайт -->
+                <!--
+                <a href="https://www.mascom.ru/" target="_blank" rel="noopener noreferrer">
+                    На сайт предприятия
+                </a>
+                -->
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="container footer-box">
+            <div>HR Interview Assistant — внутренний сервис для интервью и оценки кандидатов.</div>
+
+            <!-- ВКЛЮЧИТЬ ДЛЯ ХОСТИНГА ПРЕДПРИЯТИЯ: ссылка в footer -->
+            <!--
+            <div style="margin-top: 8px;">
+                <a href="https://www.mascom.ru/" target="_blank" rel="noopener noreferrer">
+                    Перейти на основной сайт предприятия
+                </a>
+            </div>
+            -->
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Отчёт по интервью — HR Interview Assistant{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <h2>Отчёт по интервью</h2>
+
+    <p style="margin-top: 8px;">
+        Файл: <strong>{{ filename }}</strong>
+    </p>
+
+    <article style="margin-top: 16px; white-space: pre-wrap; font-family: monospace;">
+        {{ content }}
+    </article>
+
+    <p style="margin-top: 24px;">
+        <a href="/reports">← Назад к архиву отчётов</a>
+    </p>
+</section>
+{% endblock %}

@@ -1,0 +1,454 @@
+:root {
+    --bg: #f7f7f5;
+    --surface: #ffffff;
+    --surface-soft: #fbfbfa;
+    --text: #111111;
+    --muted: #4b4b4b;
+    --border: #d9d9d9;
+
+    --primary: #0aa34f;
+    --primary-hover: #087f3d;
+    --accent: #e59612;
+
+    --primary-soft: rgba(10, 163, 79, 0.10);
+    --accent-soft: rgba(229, 150, 18, 0.12);
+
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --container: 1080px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+    color: var(--text);
+    background: linear-gradient(180deg, #eef4ef 0%, #f7f7f5 100%);
+    line-height: 1.6;
+}
+
+a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ШАПКА: зелёная полоса, контрастные белые кнопки */
+header {
+    background: #0aa34f;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+header .container,
+main.container,
+footer .container {
+    width: min(var(--container), calc(100% - 32px));
+    margin: 0 auto;
+}
+
+.header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    min-height: 78px;
+}
+
+/* ЛОГОТИП-ТЕКСТ: больше не ссылка, без hover-эффекта */
+.logo {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+}
+
+/* НАВИГАЦИЯ: белые “пухлые” кнопки */
+nav {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+nav a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    padding: 0 18px;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #0aa34f;
+    font-weight: 600;
+    font-size: 0.98rem;
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    transition:
+        background 0.18s ease,
+        color 0.18s ease,
+        transform 0.15s ease,
+        box-shadow 0.18s ease;
+}
+
+nav a::after {
+    content: none;
+}
+
+nav a:hover {
+    background: #087f3d;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+nav a:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* при желании можно ставить aria-current="page" на активный пункт */
+nav a[aria-current="page"] {
+    background: #ffffff;
+    color: #087f3d;
+    border-color: rgba(10, 163, 79, 0.35);
+}
+
+main.container {
+    padding: 36px 0 56px;
+}
+
+section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 22px;
+}
+
+h1,
+h2,
+h3 {
+    margin-top: 0;
+    color: var(--text);
+    line-height: 1.2;
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 12px;
+}
+
+h2 {
+    font-size: 1.6rem;
+    margin-bottom: 14px;
+}
+
+h3 {
+    font-size: 1.15rem;
+    margin-bottom: 14px;
+}
+
+p {
+    margin: 0 0 12px;
+    color: var(--text);
+}
+
+ul,
+ol {
+    margin: 0;
+    padding-left: 22px;
+}
+
+li {
+    margin-bottom: 10px;
+}
+
+strong {
+    color: var(--text);
+}
+
+.interview-form {
+    margin-top: 18px;
+    max-width: 760px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #2f2f2f;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface-soft);
+    color: var(--text);
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: #8c8c8c;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: var(--primary);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(10, 163, 79, 0.14);
+}
+
+.form-group textarea {
+    min-height: 160px;
+    resize: vertical;
+}
+
+.primary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 999px;
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 0.96rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+}
+
+.primary-button:hover {
+    background: var(--primary-hover);
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+}
+
+.primary-button:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.secondary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0 20px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: #9a6300;
+    font-size: 0.96rem;
+    font-weight: 700;
+    text-decoration: none;
+    border: 1px solid rgba(229, 150, 18, 0.26);
+    transition:
+        background 0.2s ease,
+        transform 0.15s ease,
+        box-shadow 0.2s ease;
+}
+
+.secondary-button:hover {
+    background: rgba(229, 150, 18, 0.18);
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+}
+
+.secondary-button:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.action-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.form-note {
+    margin-top: 14px;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+.footer-box {
+    background: transparent;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    padding-top: 20px;
+    padding-bottom: 24px;
+    font-size: 0.95rem;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.card-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+}
+
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    .header-row {
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 14px 0;
+    }
+
+    .logo {
+        font-size: 1.75rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: #ffffff;
+    }
+
+    nav {
+        gap: 14px;
+    }
+
+    main.container {
+        padding-top: 24px;
+    }
+
+    section {
+        padding: 18px;
+        border-radius: 14px;
+    }
+
+    h1 {
+        font-size: 1.7rem;
+    }
+
+    h2 {
+        font-size: 1.35rem;
+    }
+
+    h3 {
+        font-size: 1.05rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        font-size: 16px;
+    }
+}
+
+.brand-logo-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 18px;
+    background: #ffffff;
+    border-radius: 0;
+    border-right: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.brand-logo {
+    height: 54px;
+    width: auto;
+    display: block;
+}
+
+.question-meta-row {
+    margin-bottom: 6px;
+}
+
+.question-progress {
+    font-size: 0.95rem;
+    color: #6b7280;
+}
+
+.current-question-text {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin: 8px 0 14px;
+    color: #111827;
+}
+
+.hero {
+    padding: 26px 24px 24px;
+
+    /* картинка из app/static/img/hero-main-green.jpg */
+    background-image: url("/static/img/hero-main-green.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    border-radius: var(--radius);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(4px);
+    z-index: 0;
+}
+
+.hero > * {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}

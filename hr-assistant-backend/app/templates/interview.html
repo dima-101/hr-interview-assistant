@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Интервью | HR Interview Assistant{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Интервью с кандидатом</h2>
+
+    <p><strong>Вакансия:</strong> {{ vacancy_title }}</p>
+    <p><strong>Vacancy ID:</strong> {{ vacancy_id }}</p>
+    <p><strong>Статус:</strong> {{ vacancy_status }}</p>
+</section>
+
+<section>
+    <h3>Данные кандидата</h3>
+
+    <form class="interview-form">
+        <div class="form-group">
+            <label for="candidate-name">Имя кандидата</label>
+            <input
+                type="text"
+                id="candidate-name"
+                name="candidate_name"
+                placeholder="Введите имя кандидата"
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="candidate-contact">Контакт для связи (телефон или e‑mail)</label>
+            <input
+                type="text"
+                id="candidate-contact"
+                name="candidate_contact"
+                placeholder="Например: +7 900 000-00-00 или ivan@example.com"
+            >
+        </div>
+
+        <div class="form-group">
+            <label>
+                <input
+                    type="checkbox"
+                    id="candidate-consent"
+                    name="candidate_consent"
+                    style="margin-right: 8px;"
+                >
+                Я согласен(на) на обработку персональных данных в соответствии с
+                <a href="https://www.mascom.ru/" target="_blank" rel="noopener noreferrer">
+                    политикой обработки персональных данных предприятия
+                </a>.
+            </label>
+        </div>
+
+        <h3>Текущий вопрос</h3>
+
+        <div class="question-meta-row">
+            <span data-question-progress class="question-progress">
+                Вопрос 1 из N
+            </span>
+        </div>
+
+        <p id="current-question" class="current-question-text">
+            <!-- Текст активного вопроса подставляется через main.js -->
+        </p>
+
+        <div class="form-group">
+            <label for="candidate-answer">Ответ кандидата</label>
+            <textarea
+                id="candidate-answer"
+                name="candidate_answer"
+                rows="6"
+                placeholder="Введите ответ кандидата или вставьте фрагмент диалога"
+            ></textarea>
+        </div>
+
+        <div class="action-row">
+            <button type="submit" class="primary-button">
+                Отправить ответ и перейти к следующему вопросу
+            </button>
+        </div>
+    </form>
+</section>
+
+<section style="display: none;">
+    <h3>Общие вопросы</h3>
+    {% if general_questions %}
+        <ol id="general-questions-list">
+            {% for question in general_questions %}
+                <li>{{ question }}</li>
+            {% endfor %}
+        </ol>
+    {% else %}
+        <p>Общие вопросы не найдены.</p>
+    {% endif %}
+</section>
+
+<section style="display: none;">
+    <h3>Профессиональные вопросы</h3>
+    {% if professional_questions %}
+        <ol id="professional-questions-list">
+            {% for question in professional_questions %}
+                <li>{{ question }}</li>
+            {% endfor %}
+        </ol>
+    {% else %}
+        <p>Профессиональные вопросы не найдены.</p>
+    {% endif %}
+</section>
+
+<section style="display: none;">
+    <h3>Поведенческие вопросы</h3>
+    {% if behavioral_questions %}
+        <ol id="behavioral-questions-list">
+            {% for question in behavioral_questions %}
+                <li>{{ question }}</li>
+            {% endfor %}
+        </ol>
+    {% else %}
+        <p>Поведенческие вопросы не найдены.</p>
+    {% endif %}
+</section>
+
+<section>
+    <p><a href="/vacancies">← Назад к списку вакансий</a></p>
+</section>
+{% endblock %}
