@@ -52,40 +52,7 @@ hr-interview-assistant/
         └── … (копии профилей для backend)
 ```
 
-Основная рабочая backend‑часть проекта находится в папке:
-
-```text
-hr-assistant-backend/
-```
-
-Именно в этой папке расположен код FastAPI‑приложения, шаблоны, стили, статические файлы, профили вакансий и конфигурация окружения.
-
-## Основная структура проекта
-
-```text
-hr-interview-assistant/
-│   README.md
-│   .gitignore
-│
-└── hr-assistant-backend/
-    │   requirements.txt
-    │   .env.example
-    │   README_PROJECT_CONCEPT.md
-    │   CHECKLIST_PRODUCTION.md
-    │
-    ├── app/
-    │   ├── main.py
-    │   ├── config.py
-    │   ├── templates/
-    │   ├── static/
-    │   ├── data/
-    │   └── logs/
-    │
-    └── job_profiles/
-        ├── sales_soft_client_001.md
-        ├── info_security_specialist_001.md
-        └── design_engineer_rkd_001.md
-```
+Основная рабочая backend‑часть проекта находится в папке `hr-assistant-backend/` — там расположены код FastAPI‑приложения, шаблоны, стили, статические файлы, профили вакансий и конфигурация окружения.
 
 ## Что реализовано
 
