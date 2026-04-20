@@ -16,10 +16,40 @@
 
 ## Структура репозитория
 
-Корень проекта:
+Репозиторий организован следующим образом:
 
 ```text
-C:\temp\hr-interview-assistant
+hr-interview-assistant/
+│   README.md
+│   .gitignore
+│   candidate_evaluation_template.md
+│   company_knowledge_base.md
+│   demo_scenarios.md
+│   project_notes_for_submission.docx
+│   project_notes_for_submission.md
+│   system_prompt_core.md
+│
+├── job_profiles/
+│   ├── sales_soft_client_001.md
+│   ├── info_security_specialist_001.md
+│   └── design_engineer_rkd_001.md
+│
+└── hr-assistant-backend/
+    │   requirements.txt
+    │   .env.example
+    │   README_PROJECT_CONCEPT.md
+    │   CHECKLIST_PRODUCTION.md
+    │
+    ├── app/
+    │   ├── main.py
+    │   ├── config.py
+    │   ├── templates/
+    │   ├── static/
+    │   ├── data/
+    │   └── logs/
+    │
+    └── job_profiles/
+        └── … (копии профилей для backend)
 ```
 
 Основная рабочая backend‑часть проекта находится в папке:
