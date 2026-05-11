@@ -5,3 +5,5 @@ __pycache__/
 *.pyc
 app/logs/
 *.log
+app/logs/*.log
+*.log
