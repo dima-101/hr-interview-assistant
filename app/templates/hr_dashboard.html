@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}HR-панель — HR Interview Assistant{% endblock %}
+
+{% block content %}
+<section>
+    <h1>HR-панель</h1>
+    <p><strong>Вы вошли как:</strong> {{ username }}</p>
+    <p>Навигация по сервису</p>
+
+    <div class="card-list">
+        <div class="card">
+            <h3>Вакансии</h3>
+            <p>Просмотр доступных профилей вакансий и переход к интервью.</p>
+            <a class="primary-button" href="{{ vacancies_url }}">Список вакансий</a>
+        </div>
+
+        <div class="card">
+            <h3>Отчёты</h3>
+            <p>Откройте архив сохранённых отчётов по проведённым интервью.</p>
+            <a class="secondary-button" href="{{ reports_url }}">Архив отчётов по интервью</a>
+        </div>
+    </div>
+
+    <div class="action-row">
+        <a class="secondary-button" href="/hr/logout">Выйти из HR-панели</a>
+    </div>
+</section>
+{% endblock %}

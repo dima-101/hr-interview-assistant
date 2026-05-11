@@ -1,0 +1,684 @@
+{% extends "base.html" %}
+{% block title %}Создать вакансию{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <div class="container">
+        <h1 class="page-title">Импорт профиля вакансии</h1>
+
+        <p class="page-intro">
+            Сначала подготовьте профиль вакансии во внешнем ИИ (описание вакансии + промпт + YAML-шаблон),
+            затем вставьте полученный YAML ниже или загрузите файл.
+        </p>
+
+        {% if error %}
+        <div class="alert-container">
+            <div class="alert alert-error">
+                {{ error }}
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="ai-help-block">
+            <h2>Подготовка YAML во внешнем ИИ</h2>
+            <p>
+                1. Сформулируйте вакансию обычным языком у себя на компьютере.<br>
+                2. Скопируйте промпт и YAML-шаблон.<br>
+                3. Вставьте всё это во внешний ИИ и получите готовый YAML-профиль вакансии.<br>
+                4. Полученный YAML вставьте на вкладке «Вставить YAML» или загрузите файл на вкладке «Загрузить файл».
+            </p>
+
+            <div class="ai-help-actions">
+                <button type="button" class="btn btn-secondary" id="copyPromptBtn">
+                    Скопировать промпт для ИИ
+                </button>
+                <button type="button" class="btn btn-secondary" id="copyYamlTemplateBtn">
+                    Скопировать YAML-шаблон
+                </button>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <div class="tabs-header">
+                <button type="button" class="tab-button active" data-tab="tab-paste">
+                    Вставить YAML
+                </button>
+                <button type="button" class="tab-button" data-tab="tab-upload">
+                    Загрузить файл
+                </button>
+            </div>
+
+            <div class="tabs-body">
+                <div class="tab-panel active" id="tab-paste">
+                    <form id="pasteYamlForm" method="post" action="#" novalidate>
+                        <div class="form-group">
+                            <label for="yamlText">Вставьте сюда YAML-профиль вакансии</label>
+                            <textarea
+                                id="yamlText"
+                                name="yaml_text"
+                                rows="18"
+                                class="textarea-mono"
+                                placeholder="---&#10;vacancy_id: your_vacancy_id&#10;status: active&#10;title: Название вакансии&#10;department: Подразделение&#10;company_context: ...&#10;role_goal: ...&#10;..."
+                            ></textarea>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-outline" id="validateYamlBtn">
+                                Проверить YAML
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="saveYamlBtn" disabled>
+                                Сохранить вакансию
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="tab-panel" id="tab-upload">
+                    <form
+                        id="uploadYamlForm"
+                        method="post"
+                        action="/hr/vacancies/upload-yaml"
+                        enctype="multipart/form-data"
+                    >
+                        <div class="form-group">
+                            <label for="yamlFile">
+                                Загрузите файл профиля вакансии (.md, .yaml, .yml)
+                            </label>
+
+                            <div id="dropZone" class="dropzone" tabindex="0">
+                                <p id="dropZoneText">Перетащите файл сюда или нажмите, чтобы выбрать</p>
+                                <input
+                                    type="file"
+                                    id="yamlFile"
+                                    name="yaml_file"
+                                    accept=".md,.markdown,.yaml,.yml"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary" id="uploadYamlBtn">
+                                Загрузить и сохранить
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="validationMessages" class="alert-container" aria-live="polite"></div>
+
+        <div id="previewCard" class="preview-card hidden">
+            <h2>Предпросмотр профиля вакансии</h2>
+
+            <dl class="preview-grid">
+                <div>
+                    <dt>Vacancy ID</dt>
+                    <dd id="previewVacancyId">—</dd>
+                </div>
+                <div>
+                    <dt>Название</dt>
+                    <dd id="previewTitle">—</dd>
+                </div>
+                <div>
+                    <dt>Статус</dt>
+                    <dd id="previewStatus">—</dd>
+                </div>
+                <div>
+                    <dt>Подразделение</dt>
+                    <dd id="previewDepartment">—</dd>
+                </div>
+                <div>
+                    <dt>Обязанности</dt>
+                    <dd id="previewResponsibilitiesCount">—</dd>
+                </div>
+                <div>
+                    <dt>Обязательные требования</dt>
+                    <dd id="previewRequiredCount">—</dd>
+                </div>
+                <div>
+                    <dt>Желательные требования</dt>
+                    <dd id="previewPreferredCount">—</dd>
+                </div>
+                <div>
+                    <dt>Вопросы</dt>
+                    <dd id="previewQuestionsCounts">—</dd>
+                </div>
+                <div>
+                    <dt>Рубрика оценки</dt>
+                    <dd id="previewRubricPresent">—</dd>
+                </div>
+                <div>
+                    <dt>Порог прохождения</dt>
+                    <dd id="previewPassThreshold">—</dd>
+                </div>
+            </dl>
+        </div>
+
+        <div class="back-link">
+            <a href="/hr/vacancies">&larr; Назад к HR-списку вакансий</a>
+        </div>
+    </div>
+</section>
+
+<script>
+    (function () {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabPanels = document.querySelectorAll('.tab-panel');
+
+        tabButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+
+                tabButtons.forEach(b => b.classList.remove('active'));
+                tabPanels.forEach(p => p.classList.remove('active'));
+
+                btn.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+    })();
+
+    (function () {
+        const copyPromptBtn = document.getElementById('copyPromptBtn');
+        const copyYamlTemplateBtn = document.getElementById('copyYamlTemplateBtn');
+
+        const PROMPT_TEXT = `Подготовь YAML-профиль вакансии для HR Interview Assistant.
+Соблюдай структуру шаблона.
+Не добавляй пояснений до или после YAML.
+Верни только готовый YAML-профиль вакансии.`;
+
+        const YAML_TEMPLATE = `---
+vacancy_id: your_vacancy_id
+status: active
+version: 1.0
+title: "Название вакансии"
+department: "Подразделение"
+location_mode: "on-site"
+work_schedule: "5/2"
+
+company_context: >
+  Краткое описание компании, направления и контекста роли.
+
+role_goal: >
+  Главная цель роли и ожидаемый результат работы сотрудника.
+
+responsibilities:
+  - "Задача 1"
+  - "Задача 2"
+
+required_experience:
+  years: "3+"
+  background: >
+    Какой опыт обязателен.
+
+required_skills:
+  - "Обязательное требование 1"
+
+preferred_skills:
+  - "Желательное требование 1"
+
+key_soft_skills:
+  - "Коммуникация"
+
+red_flags:
+  - "Признак, что кандидат не подходит"
+
+question_bank:
+  general:
+    - "Общий вопрос"
+  technical:
+    - "Профессиональный вопрос"
+  behavioral:
+    - "Поведенческий вопрос"
+
+evaluation_rubric:
+  summary: >
+    Как оценивать кандидата в целом.
+  key_dimensions:
+    - name: "Профессиональная экспертиза"
+      weight: 60
+      guidance: >
+        На что смотреть в ответах кандидата.
+    - name: "Коммуникация"
+      weight: 40
+      guidance: >
+        Как оценивать взаимодействие и ясность ответов.
+  pass_threshold: 70
+
+updated_at: "2026-05-03"
+---`;
+
+        function copyToClipboard(text, button) {
+            if (!navigator.clipboard) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                } catch (e) {}
+                document.body.removeChild(textarea);
+            } else {
+                navigator.clipboard.writeText(text).catch(() => {});
+            }
+
+            if (button) {
+                const original = button.textContent;
+                button.textContent = 'Скопировано';
+                button.disabled = true;
+                setTimeout(() => {
+                    button.textContent = original;
+                    button.disabled = false;
+                }, 1500);
+            }
+        }
+
+        if (copyPromptBtn) {
+            copyPromptBtn.addEventListener('click', () => {
+                copyToClipboard(PROMPT_TEXT, copyPromptBtn);
+            });
+        }
+
+        if (copyYamlTemplateBtn) {
+            copyYamlTemplateBtn.addEventListener('click', () => {
+                copyToClipboard(YAML_TEMPLATE, copyYamlTemplateBtn);
+            });
+        }
+    })();
+
+    (function () {
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('yamlFile');
+        const dropZoneText = document.getElementById('dropZoneText');
+
+        if (!dropZone || !fileInput || !dropZoneText) return;
+
+        function updateSelectedFileText() {
+            if (fileInput.files && fileInput.files.length > 0) {
+                dropZoneText.textContent = `Выбран файл: ${fileInput.files[0].name}`;
+            } else {
+                dropZoneText.textContent = 'Перетащите файл сюда или нажмите, чтобы выбрать';
+            }
+        }
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                fileInput.click();
+            }
+        });
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.add('drag-over');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                dropZone.classList.remove('drag-over');
+            });
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            if (files && files.length > 0) {
+                fileInput.files = files;
+                updateSelectedFileText();
+            }
+        });
+
+        fileInput.addEventListener('change', updateSelectedFileText);
+    })();
+
+    (function () {
+        const validateBtn = document.getElementById('validateYamlBtn');
+        const saveBtn = document.getElementById('saveYamlBtn');
+        const pasteForm = document.getElementById('pasteYamlForm');
+        const yamlTextArea = document.getElementById('yamlText');
+        const messages = document.getElementById('validationMessages');
+        const preview = document.getElementById('previewCard');
+
+        function clearMessages() {
+            if (messages) {
+                messages.innerHTML = '';
+            }
+        }
+
+        function showMessage(type, text) {
+            if (!messages) return;
+
+            const div = document.createElement('div');
+            div.className = `alert alert-${type}`;
+            div.textContent = text;
+            messages.appendChild(div);
+        }
+
+        function fillPreviewFromYaml(rawText) {
+            if (!preview) return;
+
+            const text = rawText || '';
+
+            const vacancyIdMatch = text.match(/^\s*vacancy_id:\s*(.+)$/m);
+            const titleMatch = text.match(/^\s*title:\s*(.+)$/m);
+            const statusMatch = text.match(/^\s*status:\s*(.+)$/m);
+            const departmentMatch = text.match(/^\s*department:\s*(.+)$/m);
+
+            document.getElementById('previewVacancyId').textContent = vacancyIdMatch ? vacancyIdMatch[1].trim() : '—';
+            document.getElementById('previewTitle').textContent = titleMatch ? titleMatch[1].trim() : '—';
+            document.getElementById('previewStatus').textContent = statusMatch ? statusMatch[1].trim() : '—';
+            document.getElementById('previewDepartment').textContent = departmentMatch ? departmentMatch[1].trim() : '—';
+
+            const responsibilitiesCount = (text.match(/^\s*-\s.+$/gm) || []).length;
+            document.getElementById('previewResponsibilitiesCount').textContent = responsibilitiesCount ? String(responsibilitiesCount) : '—';
+
+            document.getElementById('previewRequiredCount').textContent = 'См. YAML';
+            document.getElementById('previewPreferredCount').textContent = 'См. YAML';
+            document.getElementById('previewQuestionsCounts').textContent = 'См. YAML';
+            document.getElementById('previewRubricPresent').textContent = text.includes('evaluation_rubric:') ? 'Да' : 'Нет';
+            document.getElementById('previewPassThreshold').textContent = (() => {
+                const m = text.match(/^\s*pass_threshold:\s*(.+)$/m);
+                return m ? m[1].trim() : '—';
+            })();
+
+            preview.classList.remove('hidden');
+        }
+
+        if (validateBtn && yamlTextArea) {
+            validateBtn.addEventListener('click', async () => {
+                clearMessages();
+                if (preview) preview.classList.add('hidden');
+                if (saveBtn) saveBtn.disabled = true;
+
+                const raw = yamlTextArea.value.trim();
+                if (!raw) {
+                    showMessage('error', 'Сначала вставьте YAML-профиль вакансии.');
+                    return;
+                }
+
+                try {
+                    const resp = await fetch('/api/hr/vacancies/yaml/validate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ raw_yaml: raw })
+                    });
+
+                    const data = await resp.json().catch(() => ({}));
+
+                    if (!resp.ok || !data.ok) {
+                        showMessage('error', data.error || 'Не удалось проверить YAML. Проверьте формат и попробуйте снова.');
+                        return;
+                    }
+
+                    showMessage('success', 'YAML-профиль валиден. Можно сохранять вакансию.');
+                    fillPreviewFromYaml(raw);
+
+                    if (saveBtn) {
+                        saveBtn.disabled = false;
+                    }
+                } catch (e) {
+                    console.error(e);
+                    showMessage('error', 'Произошла ошибка при проверке YAML. Попробуйте ещё раз.');
+                }
+            });
+        }
+
+        if (pasteForm && yamlTextArea) {
+            pasteForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                clearMessages();
+
+                const raw = yamlTextArea.value.trim();
+                if (!raw) {
+                    showMessage('error', 'Сначала вставьте YAML-профиль вакансии.');
+                    return;
+                }
+
+                if (saveBtn) {
+                    saveBtn.disabled = true;
+                    saveBtn.textContent = 'Сохранение...';
+                }
+
+                try {
+                    const resp = await fetch('/api/hr/vacancies/import', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ raw_yaml: raw })
+                    });
+
+                    const data = await resp.json().catch(() => ({}));
+
+                    if (!resp.ok || !data.ok) {
+                        showMessage('error', data.error || 'Не удалось сохранить вакансию.');
+                        if (saveBtn) {
+                            saveBtn.disabled = false;
+                            saveBtn.textContent = 'Сохранить вакансию';
+                        }
+                        return;
+                    }
+
+                    window.location.href = '/hr/vacancies';
+                } catch (e) {
+                    console.error(e);
+                    showMessage('error', 'Произошла ошибка при сохранении вакансии.');
+                    if (saveBtn) {
+                        saveBtn.disabled = false;
+                        saveBtn.textContent = 'Сохранить вакансию';
+                    }
+                }
+            });
+        }
+    })();
+</script>
+
+<style>
+    .page-section {
+        padding: 2rem 0 3rem;
+    }
+
+    .page-title {
+        margin-bottom: 1rem;
+    }
+
+    .page-intro {
+        margin-bottom: 1.5rem;
+        max-width: 60rem;
+    }
+
+    .ai-help-block {
+        border: 1px solid #d0d7de;
+        border-radius: 8px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+        background-color: #f6f8fa;
+    }
+
+    .ai-help-block h2 {
+        margin-bottom: 0.5rem;
+        font-size: 1.1rem;
+    }
+
+    .ai-help-block p {
+        margin-bottom: 0.75rem;
+    }
+
+    .ai-help-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .tabs {
+        margin-top: 1rem;
+    }
+
+    .tabs-header {
+        display: inline-flex;
+        border-bottom: 1px solid #d0d7de;
+        margin-bottom: 1rem;
+    }
+
+    .tab-button {
+        padding: 0.5rem 1rem;
+        border: none;
+        background: none;
+        border-bottom: 2px solid transparent;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .tab-button.active {
+        border-bottom-color: #2da44e;
+        color: #1a7f37;
+    }
+
+    .tabs-body {
+        margin-top: 0.5rem;
+    }
+
+    .tab-panel {
+        display: none;
+    }
+
+    .tab-panel.active {
+        display: block;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.35rem;
+        font-weight: 500;
+    }
+
+    .textarea-mono {
+        width: 100%;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        border-radius: 6px;
+        border: 1px solid #d0d7de;
+        padding: 0.75rem;
+        resize: vertical;
+    }
+
+    .form-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .dropzone {
+        border: 2px dashed #d0d7de;
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+        color: #57606a;
+        cursor: pointer;
+        background-color: #f6f8fa;
+    }
+
+    .dropzone.drag-over {
+        border-color: #2da44e;
+        background-color: #ecfdf3;
+        color: #1a7f37;
+    }
+
+    .dropzone input[type="file"] {
+        display: none;
+    }
+
+    .alert-container {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .alert {
+        border-radius: 6px;
+        padding: 0.5rem 0.75rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .alert-error {
+        background-color: #ffebe9;
+        border: 1px solid #ff8182;
+        color: #cf222e;
+    }
+
+    .alert-success {
+        background-color: #dafbe1;
+        border: 1px solid #2da44e;
+        color: #1a7f37;
+    }
+
+    .preview-card {
+        border-radius: 8px;
+        border: 1px solid #d0d7de;
+        padding: 1rem 1.25rem;
+        background-color: #ffffff;
+        margin-bottom: 1rem;
+    }
+
+    .preview-card.hidden {
+        display: none;
+    }
+
+    .preview-card h2 {
+        margin-bottom: 0.75rem;
+        font-size: 1.1rem;
+    }
+
+    .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 0.75rem 1.5rem;
+    }
+
+    .preview-grid dt {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #57606a;
+        margin-bottom: 0.1rem;
+    }
+
+    .preview-grid dd {
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    .back-link {
+        margin-top: 1.5rem;
+    }
+
+    .back-link a {
+        text-decoration: none;
+    }
+
+    @media (max-width: 600px) {
+        .ai-help-block {
+            padding: 0.75rem 0.9rem;
+        }
+
+        .form-actions {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+{% endblock %}

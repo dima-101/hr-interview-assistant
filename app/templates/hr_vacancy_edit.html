@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Редактирование вакансии | HR Interview Assistant</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1>HR Interview Assistant — HR‑панель</h1>
+      <nav>
+        <a href="/hr">Дашборд</a>
+        <a href="/hr/vacancies">Вакансии</a>
+        <a href="/hr/logout">Выйти ({{ username }})</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2>Редактирование вакансии (YAML‑карточка)</h2>
+
+    {% if error %}
+      <div class="alert alert-error">
+        {{ error }}
+      </div>
+    {% endif %}
+
+    <form action="/hr/vacancies/{{ vacancy_id }}/edit" method="post" class="form">
+      <section>
+        <h3>Основная информация</h3>
+
+        <label>
+          Vacancy ID (имя файла) — менять нельзя
+          <div><code>{{ vacancy_id }}</code></div>
+        </label>
+
+        <label>
+          Статус *
+          <select name="status">
+            <option value="active"  {% if status == 'active' %}selected{% endif %}>active</option>
+            <option value="closed"  {% if status == 'closed' %}selected{% endif %}>closed</option>
+            <option value="paused"  {% if status == 'paused' %}selected{% endif %}>paused</option>
+          </select>
+        </label>
+
+        <label>
+          Название вакансии *
+          <input type="text" name="title" required value="{{ title }}">
+        </label>
+
+        <label>
+          Подразделение
+          <input type="text" name="department" value="{{ department }}" placeholder="Коммерческий блок / продажи IT‑решений">
+        </label>
+
+        <label>
+          Формат работы (location_mode)
+          <select name="location_mode">
+            <option value="on-site" {% if location_mode == 'on-site' %}selected{% endif %}>on-site</option>
+            <option value="hybrid"  {% if location_mode == 'hybrid' %}selected{% endif %}>hybrid</option>
+            <option value="remote"  {% if location_mode == 'remote' %}selected{% endif %}>remote</option>
+          </select>
+        </label>
+
+        <label>
+          График работы (work_schedule)
+          <input type="text" name="work_schedule" value="{{ work_schedule }}" placeholder="5/2, 9:00–18:00">
+        </label>
+
+        <label>
+          Company context (2–3 предложения)
+          <textarea name="company_context" rows="3">{{ company_context }}</textarea>
+        </label>
+
+        <label>
+          Цель роли (role_goal)
+          <textarea name="role_goal" rows="3">{{ role_goal }}</textarea>
+        </label>
+      </section>
+
+      <section>
+        <h3>Обязанности и требования</h3>
+
+        <label>
+          Обязанности (по одной на строку)
+          <textarea name="responsibilities" rows="6">{{ responsibilities }}</textarea>
+        </label>
+
+        <label>
+          Обязательный опыт — стаж (required_experience.years)
+          <input type="text" name="required_experience_years" value="{{ required_experience_years }}" placeholder="2+">
+        </label>
+
+        <label>
+          Обязательный опыт — описание (required_experience.background)
+          <textarea name="required_experience_background" rows="3">{{ required_experience_background }}</textarea>
+        </label>
+
+        <label>
+          Обязательные навыки (required_skills, по одному на строку)
+          <textarea name="required_skills" rows="5">{{ required_skills }}</textarea>
+        </label>
+
+        <label>
+          Желательные навыки (preferred_skills, по одному на строку)
+          <textarea name="preferred_skills" rows="4">{{ preferred_skills }}</textarea>
+        </label>
+
+        <label>
+          Soft skills (key_soft_skills, по одному на строку)
+          <textarea name="key_soft_skills" rows="4">{{ key_soft_skills }}</textarea>
+        </label>
+
+        <label>
+          Red flags (по одному на строку)
+          <textarea name="red_flags" rows="4">{{ red_flags }}</textarea>
+        </label>
+      </section>
+
+      <section>
+        <h3>Банк вопросов</h3>
+
+        <label>
+          Общие вопросы (general, по одному на строку)
+          <textarea name="questions_general" rows="5">{{ questions_general }}</textarea>
+        </label>
+
+        <label>
+          Профессиональные / технические вопросы (technical, по одному на строку)
+          <textarea name="questions_technical" rows="7">{{ questions_technical }}</textarea>
+        </label>
+
+        <label>
+          Поведенческие вопросы (behavioral, по одному на строку)
+          <textarea name="questions_behavioral" rows="5">{{ questions_behavioral }}</textarea>
+        </label>
+      </section>
+
+      <section>
+        <h3>Рубрика оценки</h3>
+
+        <label>
+          Краткое summary (кого считаем сильным кандидатом)
+          <textarea name="rubric_summary" rows="3">{{ rubric_summary }}</textarea>
+        </label>
+
+        <h4>Критерий 1</h4>
+        <label>
+          Название
+          <input type="text" name="rubric_dim1_name" value="{{ rubric_dim1_name }}">
+        </label>
+        <label>
+          Вес (целое число)
+          <input type="number" name="rubric_dim1_weight" value="{{ rubric_dim1_weight }}" min="0" max="100">
+        </label>
+        <label>
+          Guidance (как оцениваем по этому критерию)
+          <textarea name="rubric_dim1_guidance" rows="3">{{ rubric_dim1_guidance }}</textarea>
+        </label>
+
+        <h4>Критерий 2</h4>
+        <label>
+          Название
+          <input type="text" name="rubric_dim2_name" value="{{ rubric_dim2_name }}">
+        </label>
+        <label>
+          Вес (целое число)
+          <input type="number" name="rubric_dim2_weight" value="{{ rubric_dim2_weight }}" min="0" max="100">
+        </label>
+        <label>
+          Guidance
+          <textarea name="rubric_dim2_guidance" rows="3">{{ rubric_dim2_guidance }}</textarea>
+        </label>
+
+        <label>
+          Порог прохождения (pass_threshold, целое число)
+          <input type="number" name="pass_threshold" value="{{ pass_threshold }}" min="0" max="100">
+        </label>
+      </section>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+        <a href="/hr/vacancies" class="btn">Отмена</a>
+      </div>
+    </form>
+  </main>
+</body>
+</html>

@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Интервью | HR Interview Assistant{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <div class="content-card">
+        <h1>Интервью с кандидатом</h1>
+
+        <div class="vacancy-meta">
+            <p><strong>Вакансия:</strong> {{ vacancy_title }}</p>
+            <p><strong>Vacancy ID:</strong> {{ vacancy_id }}</p>
+            <p><strong>Статус:</strong> {{ vacancy_status }}</p>
+        </div>
+    </div>
+
+    <div class="content-card">
+        <h2>Данные кандидата</h2>
+
+        <form
+            class="interview-form"
+            data-vacancy-id="{{ vacancy_id }}"
+            data-vacancy-title="{{ vacancy_title }}"
+        >
+            <div class="form-group">
+                <label for="candidate-name">Имя кандидата</label>
+                <input
+                    id="candidate-name"
+                    name="candidate_name"
+                    type="text"
+                    placeholder="Например: Иван Иванов"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="candidate-contact">Контакт для связи (телефон или e-mail)</label>
+                <input
+                    id="candidate-contact"
+                    name="candidate_contact"
+                    type="text"
+                    placeholder="Например: +7 900 000-00-00 или candidate@email.com"
+                >
+            </div>
+
+            <div class="form-group">
+                <label>
+                    <input id="candidate-consent" type="checkbox">
+                    Я согласен(на) на обработку персональных данных в соответствии с политикой обработки персональных данных предприятия
+                </label>
+            </div>
+
+            <div class="question-box">
+                <p class="question-block-label" data-question-block-label></p>
+                <p class="question-progress" data-question-progress>Вопрос 1 из 1</p>
+                <h3 id="current-question">Загрузка вопросов...</h3>
+            </div>
+
+            <div class="form-group">
+                <label for="candidate-answer">Ответ кандидата</label>
+                <textarea
+                    id="candidate-answer"
+                    name="candidate_answer"
+                    rows="6"
+                    placeholder="Введите ответ кандидата"
+                    required
+                ></textarea>
+            </div>
+
+            <div class="form-actions">
+                <button class="primary-button" type="submit">
+                    Отправить ответ и перейти к следующему вопросу
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="content-card" style="display: none;">
+        <h2>Общие вопросы</h2>
+        {% if general_questions %}
+        <ol id="general-questions-list">
+            {% for question in general_questions %}
+            <li>{{ question }}</li>
+            {% endfor %}
+        </ol>
+        {% else %}
+        <ol id="general-questions-list"></ol>
+        {% endif %}
+
+        <h2>Профессиональные вопросы</h2>
+        {% if professional_questions %}
+        <ol id="professional-questions-list">
+            {% for question in professional_questions %}
+            <li>{{ question }}</li>
+            {% endfor %}
+        </ol>
+        {% else %}
+        <ol id="professional-questions-list"></ol>
+        {% endif %}
+
+        <h2>Поведенческие вопросы</h2>
+        {% if behavioral_questions %}
+        <ol id="behavioral-questions-list">
+            {% for question in behavioral_questions %}
+            <li>{{ question }}</li>
+            {% endfor %}
+        </ol>
+        {% else %}
+        <ol id="behavioral-questions-list"></ol>
+        {% endif %}
+    </div>
+
+    <div class="content-card">
+        <p>
+            <a href="/vacancies">← Назад к списку вакансий</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

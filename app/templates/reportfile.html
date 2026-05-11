@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}Просмотр отчёта — HR Interview Assistant{% endblock %}
+
+{% block content %}
+<section class="report-view-section">
+    <div class="report-view-header">
+        <div>
+            <div class="badge">Сохранённый отчёт</div>
+            <h1>Просмотр отчёта</h1>
+            <p class="report-view-subtitle">
+                Ниже показано содержимое сохранённого отчёта в более читаемом формате.
+            </p>
+        </div>
+    </div>
+
+    <div class="report-file-meta">
+        <div class="report-meta-item">
+            <span class="report-meta-label">Имя файла</span>
+            <span class="report-meta-value report-filename">{{ filename }}</span>
+        </div>
+    </div>
+
+    <article class="report-rendered-card">
+        <div id="reportRenderedContent" class="report-rendered-content"></div>
+
+        <script id="reportRawContent" type="text/plain">{{ content }}</script>
+    </article>
+</section>
+
+<section class="report-view-actions">
+    <div class="action-row">
+        <a href="/reports" class="secondary-button">← Назад в архив отчётов</a>
+        <a href="/hr" class="secondary-button">← Назад в HR-панель</a>
+    </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const rawNode = document.getElementById("reportRawContent");
+    const target = document.getElementById("reportRenderedContent");
+
+    if (!rawNode || !target) return;
+
+    const rawText = rawNode.textContent || "";
+    const lines = rawText.split(/\r?\n/);
+
+    function escapeHtml(text) {
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+    }
+
+    function formatInline(text) {
+        let safe = escapeHtml(text);
+
+        safe = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        safe = safe.replace(/`(.+?)`/g, '<code>$1</code>');
+
+        return safe;
+    }
+
+    let html = "";
+    let inList = false;
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+
+        if (!line) {
+            if (inList) {
+                html += "</ul>";
+                inList = false;
+            }
+            continue;
+        }
+
+        if (line.startsWith("# ")) {
+            if (inList) {
+                html += "</ul>";
+                inList = false;
+            }
+            html += `<h1>${formatInline(line.slice(2))}</h1>`;
+            continue;
+        }
+
+        if (line.startsWith("## ")) {
+            if (inList) {
+                html += "</ul>";
+                inList = false;
+            }
+            html += `<h2>${formatInline(line.slice(3))}</h2>`;
+            continue;
+        }
+
+        if (line.startsWith("### ")) {
+            if (inList) {
+                html += "</ul>";
+                inList = false;
+            }
+            html += `<h3>${formatInline(line.slice(4))}</h3>`;
+            continue;
+        }
+
+        if (line.startsWith("- ")) {
+            if (!inList) {
+                html += "<ul>";
+                inList = true;
+            }
+            html += `<li>${formatInline(line.slice(2))}</li>`;
+            continue;
+        }
+
+        if (/^\d+\.\s+/.test(line)) {
+            if (!inList) {
+                html += "<ul>";
+                inList = true;
+            }
+            html += `<li>${formatInline(line.replace(/^\d+\.\s+/, ""))}</li>`;
+            continue;
+        }
+
+        if (inList) {
+            html += "</ul>";
+            inList = false;
+        }
+
+        html += `<p>${formatInline(line)}</p>`;
+    }
+
+    if (inList) {
+        html += "</ul>";
+    }
+
+    target.innerHTML = html || "<p>Содержимое отчёта пустое.</p>";
+});
+</script>
+{% endblock %}

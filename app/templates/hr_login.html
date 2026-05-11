@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Вход в HR-панель — HR Interview Assistant{% endblock %}
+
+{% block content %}
+<section>
+    <h1>Вход в HR-панель</h1>
+    <p>Введите логин и пароль для доступа к защищённому разделу сервиса.</p>
+
+    <div class="card" style="max-width: 520px;">
+        <form method="post" action="/hr/login">
+            <div class="form-group">
+                <label for="username">Логин</label>
+                <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    placeholder="Введите логин"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Пароль</label>
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    placeholder="Введите пароль"
+                    required
+                >
+            </div>
+
+            {% if error %}
+            <p style="color: #b42318; font-weight: 600;">{{ error }}</p>
+            {% endif %}
+
+            <div class="action-row">
+                <button class="primary-button" type="submit">Войти</button>
+                <a class="secondary-button" href="/">На главную</a>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

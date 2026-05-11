@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="page-section">
+  <h1>Архив отчётов по интервью</h1>
+  <p class="page-intro">
+    Ниже представлены сохранённые отчёты, сформированные по результатам интервью.
+  </p>
+
+  <form method="get" class="reports-filter-form">
+    <label for="vacancy-filter">Вакансия:</label>
+    <select id="vacancy-filter" name="vacancy_id" onchange="this.form.submit()">
+      <option value="">Все вакансии</option>
+      {% for vid in vacancy_options %}
+        <option value="{{ vid }}" {% if vid == selected_vacancy_id %}selected{% endif %}>
+          {{ vid }}
+        </option>
+      {% endfor %}
+    </select>
+  </form>
+
+  <table class="reports-table">
+    <thead>
+      <tr>
+        <th>Дата</th>
+        <th>Кандидат</th>
+        <th>Вакансия</th>
+        <th>Рекомендация</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for report in reports %}
+      <tr>
+        <td>{{ report.created_at }}</td>
+        <td title="{{ report.filename }}">
+          <span class="report-filename-cell">{{ report.candidate_name }}</span>
+        </td>
+        <td>{{ report.vacancy_id }}</td>
+        <td>
+          {% if report.status == "pass" %}
+            <span class="report-status status-pass">Рекомендовать</span>
+          {% elif report.status == "fail" %}
+            <span class="report-status status-fail">Не рекомендовать</span>
+          {% else %}
+            <span class="report-status status-borderline">Требует дополнительной оценки</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{{ report.view_url }}" class="btn-link">Открыть отчёт</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <p class="page-footer-link">
+    <a href="/hr">← Назад в HR-панель</a>
+  </p>
+</section>
+{% endblock %}

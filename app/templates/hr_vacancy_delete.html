@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Удаление вакансии | HR Interview Assistant</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<header>
+    <div class="container header-row">
+        <div class="logo">HR Interview Assistant — HR-панель</div>
+        <nav>
+            <a href="/hr">Дашборд</a>
+            <a href="/hr/vacancies" aria-current="page">Вакансии</a>
+            <a href="/hr/logout">Выйти ({{ username }})</a>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+    <section>
+        <h1>Удаление вакансии</h1>
+
+        {% if error %}
+            <p style="color:#b42318; font-weight:700; margin-bottom:16px;">{{ error }}</p>
+        {% endif %}
+
+        <p>
+            Вы собираетесь удалить карточку вакансии с ID:
+            <strong><code>{{ vacancy_id }}</code></strong>
+        </p>
+        <p>
+            Это действие <strong>невозможно</strong> отменить. Файл в каталоге
+            <code>job_profiles</code> будет удалён.
+        </p>
+    </section>
+
+    <section>
+        <form action="/hr/vacancies/{{ vacancy_id }}/delete" method="post" class="interview-form">
+            <div class="form-group">
+                <label for="confirm_vacancy_id">
+                    Чтобы подтвердить удаление, введите Vacancy ID точно так же:
+                </label>
+                <input
+                    id="confirm_vacancy_id"
+                    type="text"
+                    name="confirm_vacancy_id"
+                    placeholder="{{ vacancy_id }}"
+                    required
+                >
+            </div>
+
+            <div class="action-row">
+                <button
+                    type="submit"
+                    class="primary-button"
+                    style="background:#b42318;"
+                >
+                    Удалить вакансию
+                </button>
+                <a href="/hr/vacancies" class="secondary-button">Отмена</a>
+            </div>
+        </form>
+    </section>
+</main>
+</body>
+</html>

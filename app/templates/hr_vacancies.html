@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вакансии | HR Interview Assistant</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<header>
+    <div class="container header-row">
+        <div class="logo">HR Interview Assistant — HR‑панель</div>
+        <nav>
+            <a href="/hr">Дашборд</a>
+            <a href="/hr/vacancies" aria-current="page">Вакансии</a>
+            <a href="/reports">Отчёты</a>
+            <a href="/hr/logout">Выйти ({{ username }})</a>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+    <section>
+        <div class="header-row">
+            <div>
+                <h1>Профили вакансий</h1>
+                <p>
+                    Управляйте карточками вакансий: редактируйте, меняйте статус,
+                    открывайте публичную страницу и удаляйте неактуальные профили.
+                </p>
+            </div>
+            <a href="/hr/vacancies/new" class="primary-button">Создать вакансию</a>
+        </div>
+
+        {% if error %}
+            <p class="hr-error">{{ error }}</p>
+        {% endif %}
+    </section>
+
+    {% if vacancies|length == 0 %}
+        <section>
+            <p>Пока нет ни одной вакансии. Создайте первую карточку.</p>
+        </section>
+    {% else %}
+        <section>
+            <div class="vacancies-grid">
+                {% for v in vacancies %}
+                    <article class="vacancy-card">
+                        <div class="vacancy-card__top">
+                            <h3 class="vacancy-card__title">{{ v.title }}</h3>
+                            <span class="vacancy-status status-{{ v.status }}">{{ v.status }}</span>
+                        </div>
+
+                        <p class="vacancy-card__id">
+                            Vacancy ID: <code>{{ v.vacancy_id }}</code>
+                        </p>
+
+                        <div class="vacancy-card__meta">
+                            {% if v.department %}
+                                <span class="badge">{{ v.department }}</span>
+                            {% endif %}
+                            <span class="badge">slug: {{ v.slug }}</span>
+                        </div>
+
+                        <div class="vacancy-card__stats">
+                            {% if v.required_requirements %}
+                                <p><strong>Обязательные требования:</strong> {{ v.required_requirements|length }}</p>
+                            {% endif %}
+                            {% if v.general_questions %}
+                                <p><strong>Общие вопросы:</strong> {{ v.general_questions|length }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="vacancy-card__actions">
+                            <a href="/vacancies/{{ v.slug }}" class="secondary-button" target="_blank" rel="noopener noreferrer">
+                                Открыть карточку
+                            </a>
+                            <a href="/interview?vacancyid={{ v.vacancy_id }}" class="secondary-button">
+                                Начать интервью
+                            </a>
+                            <a href="/hr/vacancies/{{ v.vacancy_id }}/edit" class="primary-button">
+                                Редактировать
+                            </a>
+                            <a href="/hr/vacancies/{{ v.vacancy_id }}/delete" class="vacancy-danger-link">
+                                Удалить
+                            </a>
+                        </div>
+
+                        <form
+                            action="/hr/vacancies/{{ v.vacancy_id }}/status"
+                            method="post"
+                            class="vacancy-status-form"
+                        >
+                            <label for="status_{{ v.vacancy_id }}">Статус вакансии</label>
+                            <div class="vacancy-status-form__row">
+                                <select id="status_{{ v.vacancy_id }}" name="status" required>
+                                    <option value="active" {% if v.status == 'active' %}selected{% endif %}>active</option>
+                                    <option value="paused" {% if v.status == 'paused' %}selected{% endif %}>paused</option>
+                                    <option value="closed" {% if v.status == 'closed' %}selected{% endif %}>closed</option>
+                                </select>
+                                <button type="submit" class="secondary-button">Сохранить статус</button>
+                            </div>
+                        </form>
+                    </article>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+</main>
+</body>
+</html>
