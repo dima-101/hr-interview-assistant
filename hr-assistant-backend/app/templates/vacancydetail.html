@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}{{ vacancy_title }} | HR Interview Assistant{% endblock %}
+
+{% block content %}
+<section>
+    <h2>{{ vacancy_title }}</h2>
+
+    <p><strong>Vacancy ID:</strong> {{ vacancy_id }}</p>
+    <p><strong>Статус:</strong> {{ vacancy_status }}</p>
+
+    <p>
+        <a href="/interview?vacancyid={{ vacancy_id }}">Начать интервью</a>
+    </p>
+</section>
+
+<section>
+    <h3>Обязанности</h3>
+    {% if responsibilities %}
+        <ul>
+            {% for item in responsibilities %}
+                <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Данные не указаны.</p>
+    {% endif %}
+</section>
+
+<section>
+    <h3>Обязательные требования</h3>
+    {% if required_requirements %}
+        <ul>
+            {% for item in required_requirements %}
+                <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Данные не указаны.</p>
+    {% endif %}
+</section>
+
+<section>
+    <h3>Желательные требования</h3>
+    {% if preferred_requirements %}
+        <ul>
+            {% for item in preferred_requirements %}
+                <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Данные не указаны.</p>
+    {% endif %}
+</section>
+
+<section>
+    <h3>Red flags</h3>
+    {% if red_flags %}
+        <ul>
+            {% for item in red_flags %}
+                <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Данные не указаны.</p>
+    {% endif %}
+</section>
+
+<section>
+    <p><a href="/vacancies">← Назад к списку вакансий</a></p>
+</section>
+{% endblock %}

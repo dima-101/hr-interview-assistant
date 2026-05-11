@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Вакансии | HR Interview Assistant{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Вакансии</h2>
+    <p>Ниже представлены доступные профили вакансий.</p>
+
+    {% if vacancies %}
+        <ul class="vacancy-list">
+            {% for vacancy in vacancies %}
+                <li class="vacancy-item">
+                    <a class="vacancy-title" href="/vacancies/{{ vacancy.slug }}">
+                        {{ vacancy.title }}
+                    </a>
+                    <div class="vacancy-meta">
+                        Vacancy ID: {{ vacancy.vacancy_id }}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Профили вакансий не найдены.</p>
+    {% endif %}
+</section>
+{% endblock %}

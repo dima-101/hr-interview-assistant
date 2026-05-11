@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Отчёт по интервью | HR Interview Assistant{% endblock %}
+
+{% block content %}
+<section>
+    <h2>Отчёт по интервью</h2>
+    <p><strong>Вакансия:</strong> {{ vacancy_title }}</p>
+    <p><strong>Vacancy ID:</strong> {{ vacancy_id }}</p>
+    <p><strong>Кандидат:</strong> {{ candidate_name }}</p>
+    <p><strong>Дата интервью:</strong> {{ interview_date }}</p>
+</section>
+
+<section>
+    <h3>Итоговая рекомендация</h3>
+    <p><strong>Решение:</strong> {{ recommendation }}</p>
+    <p><strong>Общий балл:</strong> {{ total_score }}</p>
+</section>
+
+<section>
+    <h3>Краткое резюме</h3>
+    <p>{{ summary }}</p>
+</section>
+
+<section>
+    <h3>Сильные стороны</h3>
+    {% if strengths %}
+        <ul>
+            {% for item in strengths %}
+                <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Сильные стороны не указаны.</p>
+    {% endif %}
+</section>
+
+<section>
+    <h3>Риски и замечания</h3>
+    {% if risks %}
+        <ul>
+            {% for item in risks %}
+                <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Риски и замечания не указаны.</p>
+    {% endif %}
+</section>
+
+<section>
+    <h3>Комментарий интервьюера</h3>
+    <p>{{ interviewer_notes }}</p>
+</section>
+{% endblock %}

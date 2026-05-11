@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}HR-панель — HR Interview Assistant{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <h2>HR-панель</h2>
+
+    <p style="margin-top: 8px;">
+        Вы вошли как: <strong>{{ username }}</strong>
+    </p>
+
+    <div style="margin-top: 24px;">
+        <h3>Навигация по сервису</h3>
+
+        <ul style="margin-top: 8px; padding-left: 20px;">
+            <li>
+                <a href="{{ vacancies_url }}">Список вакансий</a>
+            </li>
+            <li>
+                <a href="{{ reports_url }}">Архив отчётов по интервью</a>
+            </li>
+            <li>
+                <a href="{{ single_report_url }}">Пример отчёта по интервью</a>
+            </li>
+        </ul>
+    </div>
+
+    <div style="margin-top: 24px;">
+        <a href="/hr/logout">Выйти из HR-панели</a>
+    </div>
+</section>
+{% endblock %}

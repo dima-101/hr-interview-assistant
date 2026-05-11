@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Архив отчётов — HR Interview Assistant{% endblock %}
+
+{% block content %}
+<section class="page-section">
+    <h2>Архив отчётов по интервью</h2>
+
+    {% if reports and reports|length > 0 %}
+        <p style="margin-top: 8px;">
+            Найдено отчётов: {{ reports|length }}
+        </p>
+
+        <table style="width: 100%; margin-top: 16px; border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th style="text-align: left; border-bottom: 1px solid #ccc; padding: 8px;">
+                        Имя файла
+                    </th>
+                    <th style="text-align: left; border-bottom: 1px solid #ccc; padding: 8px;">
+                        Дата создания
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                <tr>
+                    <td style="border-bottom: 1px solid #eee; padding: 8px;">
+                        <a href="{{ report.view_url }}">{{ report.filename }}</a>
+                    </td>
+                    <td style="border-bottom: 1px solid #eee; padding: 8px;">
+                        {{ report.created_at }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p style="margin-top: 12px;">
+            Пока нет сохранённых отчётов.
+        </p>
+    {% endif %}
+
+    <p style="margin-top: 24px;">
+        <a href="/hr">Вернуться в HR-панель</a>
+    </p>
+</section>
+{% endblock %}
