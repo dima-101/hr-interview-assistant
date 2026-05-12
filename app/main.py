@@ -57,9 +57,8 @@ templates = Jinja2Templates(directory="app/templates")
 
 APP_DIR = Path(__file__).resolve().parent
 BACKEND_DIR = APP_DIR.parent
-PROJECT_ROOT = BACKEND_DIR.parent
 
-JOB_PROFILES_DIR = PROJECT_ROOT / "job_profiles"
+JOB_PROFILES_DIR = BACKEND_DIR / "job_profiles"
 REPORTS_DIR = APP_DIR / "data" / "reports" / "save"
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
