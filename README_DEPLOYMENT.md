@@ -194,10 +194,10 @@ GIGACHAT_MODEL=
 ### 4. Тестовый запуск приложения
 
 ```bash
-uvicorn app.main:app --host 0.0.0.0 --port 8000
+uvicorn app.main:app --host 0.0.0.0 --port 8010
 ```
 
-После запуска необходимо убедиться, что приложение открывается по IP сервера и порту `8000`, а основные маршруты работают без критических ошибок.
+После запуска необходимо убедиться, что приложение открывается по IP сервера и порту `8010`, а основные маршруты работают без критических ошибок.
 
 ### 5. Настройка systemd
 
@@ -219,7 +219,7 @@ User=www-data
 Group=www-data
 WorkingDirectory=/opt/hr-assistant-backend
 Environment="PATH=/opt/hr-assistant-backend/venv/bin"
-ExecStart=/opt/hr-assistant-backend/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
+ExecStart=/opt/hr-assistant-backend/venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8010
 Restart=always
 RestartSec=5
 
@@ -252,7 +252,7 @@ server {
     server_name hr.company.ru;
 
     location / {
-        proxy_pass http://127.0.0.1:8000;
+        proxy_pass http://127.0.0.1:8010;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -276,6 +276,24 @@ sudo systemctl reload nginx
 Можно использовать:
 - `certbot` и Let's Encrypt;
 - корпоративный SSL‑сертификат предприятия.
+
+## Выполненные production-проверки
+
+На текущем этапе для рабочего домена уже были успешно выполнены базовые инфраструктурные проверки production-контура:
+
+- проверен HTTP -> HTTPS redirect: запрос к `http://hr.dmitry-prompt.ru` возвращает `301 Moved Permanently` и перенаправляет на `https://hr.dmitry-prompt.ru/`;
+- проверен тест автопродления сертификатов: `sudo certbot renew --dry-run` завершается успешно;
+- подтверждено, что simulated renewal проходит как для `dmitry-prompt.ru`, так и для `hr.dmitry-prompt.ru`;
+- подтверждено, что после исправления upstream-порта backend на `8010` HTTPS-маршрутизация через Nginx работает корректно.
+
+Пример команд финальной проверки:
+
+```bash
+curl -I http://hr.dmitry-prompt.ru
+sudo certbot renew --dry-run
+```
+
+Эти проверки рекомендуется сохранить в финальной инструкции повторного деплоя и выполнять после изменений Nginx, Certbot, домена или серверного окружения.
 
 ## Что проверить после установки
 
