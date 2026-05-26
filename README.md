@@ -1,4 +1,4 @@
-# HR Interview Assistant v2.0.0
+# HR Interview Assistant v2.0.0 (https://hr.dmitry-prompt.ru)
 
 ## О проекте
 
